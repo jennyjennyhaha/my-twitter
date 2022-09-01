@@ -2,7 +2,7 @@
 
 echo 'Start!'
 
-#update-alternatives --install /usr/bin/python python /usr/bin/python3.6 2
+update-alternatives --install /usr/bin/python python /usr/bin/python3.8 2
 
 #cd /vagrant
 
@@ -27,7 +27,7 @@ else
 fi
 
 # 升级pip，目前存在问题，read timed out，看脸，有时候可以，但大多时候不行
-# python -m pip install --upgrade pip
+python -m pip install --upgrade pip
 # 换源完美解决
 # 安装pip所需依赖
 pip install --upgrade setuptools # -i https://pypi.tuna.tsinghua.edu.cn/simple
