@@ -37,6 +37,7 @@ pip install -U pip # -i https://pypi.tuna.tsinghua.edu.cn/simple
 # 根据 requirements.txt 里的记录安装 pip package，确保所有版本之间的兼容性
 pip install -r requirements.txt # -i https://pypi.tuna.tsinghua.edu.cn/simple
 
+service mysql start
 
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
@@ -46,6 +47,9 @@ mysql -u root << EOF
 	show databases;
 	CREATE DATABASE IF NOT EXISTS twitter;
 EOF
+
+python manage.py migrate
+
 # fi
 # superuser名字
 USER="admin"
