@@ -75,3 +75,10 @@ class AccountViewSet(viewsets.ViewSet):
             data['user'] = UserSerializer(request.user).data
         return Response(data)
 
+    @action(methods=['POST'], detail=False)
+    def logout(self, request):
+        """
+        logout the curr user
+        """
+        django_logout(request)
+        return Response({"success": True})
