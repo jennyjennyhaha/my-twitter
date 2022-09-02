@@ -2,15 +2,15 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers, exceptions
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email')
+        fields = ('username', 'email')
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=20, min_length=6)
-    password = serializers.CharField(max_length=20, min_length=6)
+    username = serializers.CharField(max_length=20, min_length=1)
+    password = serializers.CharField(max_length=20, min_length=1)
     email = serializers.EmailField()
 
     class Meta:
