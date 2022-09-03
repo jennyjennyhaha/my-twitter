@@ -90,3 +90,47 @@ class AccountApiTests(TestCase):
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], False)
 
+    def test_signup(self):
+        data = {
+            'username': 'someone',
+            'email': 'someone@twitter.com',
+            'password': 'any password',
+        }
+        # 测试 get 请求失败
+        response = self.client.get(SIGNUP_URL, data)
+        self.assertEqual(response.status_code, 405)
+
+        # 测试错误的邮箱
+        response = self.client.post(SIGNUP_URL, {
+            'username': 'someone',
+            'email': 'not a correct email',
+            'password': 'any password'
+        })
+        # print(response.data)
+        self.assertEqual(response.status_code, 400)
+
+        # 测试密码太短
+        response = self.client.post(SIGNUP_URL, {
+            'username': 'someone',
+            'email': 'someone@twitter.com',
+            'password': '',
+        })
+        # print(response.data)
+        self.assertEqual(response.status_code, 400)
+
+        # 测试用户名太长
+        response = self.client.post(SIGNUP_URL, {
+            'username': 'username is tooooooooooooooooo loooooooong',
+            'email': 'someone@twitter.com',
+            'password': 'any password',
+        })
+        # print(response.data)
+        self.assertEqual(response.status_code, 400)
+
+        # 成功注册
+        response = self.client.post(SIGNUP_URL, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['user']['username'], 'someone')
+        # 验证用户已经登入
+        response = self.client.get(LOGIN_STATUS_URL)
+        self.assertEqual(response.data['has_logged_in'], True)
