@@ -1,5 +1,3 @@
-# import unittest
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
@@ -28,8 +26,8 @@ class AccountApiTests(TestCase):
         self.client = APIClient()
         self.user = self.createUser(
             username='admin',
-            email='admin@admin.com',
-            password='admin',
+            email='admin@twitter.com',
+            password='correct password',
         )
 
     def createUser(self, username, email, password):
@@ -64,8 +62,31 @@ class AccountApiTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.data['user'], None)
-        self.assertEqual(response.data['user']['email'], 'admin@admin.com')
+        self.assertEqual(response.data['user']['email'], 'admin@twitter.com')
 
         # auth already login
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
+
+    def test_logout(self):
+        # login first
+        self.client.post(LOGIN_URL, {
+            'username': self.user.username,
+            'password': 'correct password',
+        })
+        # auth user has logged in
+        response = self.client.get(LOGIN_STATUS_URL)
+        self.assertEqual(response.data['has_logged_in'], True)
+
+        # test must use post
+        response = self.client.get(LOGOUT_URL)
+        self.assertEqual(response.status_code, 405)
+
+        # use post logout success
+        response = self.client.post(LOGOUT_URL)
+        self.assertEqual(response.status_code, 200)
+
+        # auth user has logged out
+        response = self.client.get(LOGIN_STATUS_URL)
+        self.assertEqual(response.data['has_logged_in'], False)
+
