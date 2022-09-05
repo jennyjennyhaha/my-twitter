@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 
     # project apps
     'accounts',
+
+    # tweets
+    'tweets',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
