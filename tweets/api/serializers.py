@@ -3,6 +3,7 @@ from rest_framework import serializers
 from tweets.models import Tweet
 
 
+# serializer: inquery from database and output to frontend
 class TweetSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -17,6 +18,9 @@ class TweetCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tweet
         fields = ('content',)
+
+    # rewrite the create method in TweetCreateSerializer. the create() method will be called
+    # when save() is called to save the post
 
     def create(self, validated_data):
         user = self.context['request'].user

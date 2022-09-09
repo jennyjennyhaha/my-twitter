@@ -20,6 +20,7 @@ class TweetViewSet(viewsets.GenericViewSet,
             return [AllowAny()]
         return [IsAuthenticated()]
 
+    # used to implement seeing all tweets of one user
     def list(self, request, *args, **kwargs):
         """
         重载 list 方法，不列出所有 tweets，必须要求指定 user_id 作为筛选条件
@@ -41,19 +42,25 @@ class TweetViewSet(viewsets.GenericViewSet,
         # 而不能用 list 的格式（约定俗成）
         return Response({'tweets': serializer.data})
 
+    # used to implement the tweet post
     def create(self, request, *args, **kwargs):
         """
         重载 create 方法，因为需要默认用当前登录用户作为 tweet.user
         """
         serializer = TweetCreateSerializer(
             data=request.data,
+            # context is used to send extra param to serializers, when serializer.save() is called,
+            # the create() method will be called and user info will be obtained from the request
             context={'request': request},
         )
+
+        # before obtaining the de-serialized data, the method is_valid() has to be called to validate
         if not serializer.is_valid():
             return Response({
                 'success': False,
                 'message': "Please check input",
                 'errors': serializer.errors,
             }, status=400)
+        # when validate is completed, the data is saved to database
         tweet = serializer.save()
         return Response(TweetSerializer(tweet).data, status=201)
