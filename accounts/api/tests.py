@@ -1,6 +1,8 @@
-from django.test import TestCase
+# from django.test import TestCase
 from rest_framework.test import APIClient
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+
+from testing.testcases import TestCase
 
 
 LOGIN_URL = '/api/accounts/login/'
@@ -24,16 +26,18 @@ class AccountApiTests(TestCase):
     def setUp(self):
         # run when every test function is executed
         self.client = APIClient()
-        self.user = self.createUser(
+        # self.user = self.createUser(
+        self.user = self.create_user(
             username='admin',
             email='admin@twitter.com',
             password='correct password',
         )
-
+"""
     def createUser(self, username, email, password):
         # cannot use User.objects.create()
         # since password needs encryption, and username and email need normalize process
         return User.objects.create_user(username, email, password)
+"""
 
     def test_login(self):
         # test function must start with test_ to be called automatically
