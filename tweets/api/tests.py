@@ -5,7 +5,7 @@ from tweets.models import Tweet
 
 # attention: '/' is needed, otherwise there will be 301 redirect
 TWEET_LIST_API = '/api/tweets/'
-TWEET_CREATE_API = 'api/tweets/'
+TWEET_CREATE_API = '/api/tweets/'
 
 
 class TweetApiTests(TestCase):
@@ -43,7 +43,7 @@ class TweetApiTests(TestCase):
 
     def test_create_api(self):
         # must login
-        response = self.anonymous_client.post(TWEET_CREATE_API)
+        response = self.anonymous_client.post(TWEET_LIST_API)
         self.assertEqual(response.status_code, 403)
 
         # must have content

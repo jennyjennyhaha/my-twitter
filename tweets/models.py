@@ -8,7 +8,12 @@ from utils.time_helpers import utc_now
 class Tweet(models.Model):
     # thw author of the post
     # user and tweets: one to many, so use foreignKey to implement
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        # help_test='the author of this tweet',
+    )
     # save the tweets with any length
     content = models.CharField(max_length=255)
     # save the posting time of the tweet

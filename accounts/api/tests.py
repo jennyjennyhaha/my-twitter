@@ -32,12 +32,12 @@ class AccountApiTests(TestCase):
             email='admin@twitter.com',
             password='correct password',
         )
-"""
+    """
     def createUser(self, username, email, password):
         # cannot use User.objects.create()
         # since password needs encryption, and username and email need normalize process
         return User.objects.create_user(username, email, password)
-"""
+    """
 
     def test_login(self):
         # test function must start with test_ to be called automatically
