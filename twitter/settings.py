@@ -45,6 +45,9 @@ INSTALLED_APPS = [
 
     # tweets
     'tweets',
+
+    # friendships
+    'friendships',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
