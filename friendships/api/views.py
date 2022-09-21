@@ -21,6 +21,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
 
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
     def followers(self, request, pk):
+        # get  /api/friendships/1/followers/
         friendships = Friendship.objects.filter(to_user_id=pk).order_by('-created_at')
         serializer = FollowerSerializer(friendships, many=True)
         return Response(
@@ -78,3 +79,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
             to_user=pk,
         ).delete()
         return Response({'success': True, 'deleted': deleted})
+
+    # attn: this is used to add the friendships link in the urls
+    def list(self, request):
+        return Response({'message': 'this is friendships home page'})
