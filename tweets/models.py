@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from likes.models import Like
 from utils.time_helpers import utc_now
 
 
@@ -28,6 +30,13 @@ class Tweet(models.Model):
     def hours_to_now(self):
         # datetime.now  no time zone in it, we need to add the time zone info of utc
         return (utc_now() - self.created_at).seconds // 3600
+
+    @property
+    def like_set(self):
+        return Like.objects.filter(
+            content_type=ContentType.objects.get_for_model(Tweet),
+            object_id=self.id,
+        ).order_by('-created_at')
 
     def __str__(self):
         # what is displayed when executing  print(tweet instance)
