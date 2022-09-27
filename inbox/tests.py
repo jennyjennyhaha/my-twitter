@@ -1,3 +1,4 @@
+"""
 from testing.testcases import TestCase
 from inbox.services import NotificationService
 from notifications.models import Notification
@@ -31,3 +32,4 @@ class NotificationServiceTests(TestCase):
         like = self.create_like(self.asdfgh, self.qwerty_tweet)
         NotificationService.send_like_notification(like)
         self.assertEqual(Notification.objects.count(), 1)
+"""
