@@ -1,3 +1,4 @@
+"""
 from django.contrib import admin
 from accounts.models import UserProfile
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -25,3 +26,4 @@ class UserAdmin(BaseUserAdmin):
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+"""

@@ -40,7 +40,7 @@ class AccountViewSet(viewsets.ViewSet):
 
         # create_UserProfile object, can also be written in serializers.py
         # code in views should be as little as possible
-        user.profile
+        # user.profile
 
         django_login(request, user)
 

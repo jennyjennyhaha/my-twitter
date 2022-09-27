@@ -1,3 +1,4 @@
+"""
 from comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from notifications.signals import notify
@@ -37,3 +38,4 @@ class NotificationService(object):
             verb='liked your comment',
             target=comment.tweet,
         )
+"""

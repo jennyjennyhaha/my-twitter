@@ -1,3 +1,4 @@
+"""
 from inbox.api.serializers import (
     NotificationSerializer,
     NotificationSerializerForUpdate,
@@ -32,18 +33,7 @@ class NotificationViewSet(
 
     @required_params(methods='POST', params=['unread'])
     def update(self, request, *args, **kwargs):
-        """
-        用户可以标记一个 notification 为已读或者未读。标记已读和未读都是对 notification
-        的一次更新操作，所以直接重载 update 的方法来实现。另外一种实现方法是用一个专属的 action：
-            @action(methods=['POST'], detail=True, url_path='mark-as-read')
-            def mark_as_read(self, request, *args, **kwargs):
-                ...
-            @action(methods=['POST'], detail=True, url_path='mark-as-unread')
-            def mark_as_unread(self, request, *args, **kwargs):
-                ...
-        两种方法都可以，我更偏好重载 update，因为更通用更 rest 一些, 而且 mark as unread 和
-        mark as read 可以公用一套逻辑。
-        """
+
         serializer = NotificationSerializerForUpdate(
             instance=self.get_object(),
             data=request.data,
@@ -58,3 +48,4 @@ class NotificationViewSet(
             NotificationSerializer(notification).data,
             status=status.HTTP_200_OK,
         )
+"""

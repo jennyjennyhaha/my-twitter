@@ -1,3 +1,4 @@
+"""
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -35,3 +36,4 @@ def get_profile(user):
 
 # 给 User Model 增加了一个 profile 的 property 方法用于快捷访问
 User.profile = property(get_profile)
+"""

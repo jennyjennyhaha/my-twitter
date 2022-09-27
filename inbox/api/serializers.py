@@ -1,3 +1,4 @@
+"""
 from rest_framework import serializers
 from notifications.models import Notification
 
@@ -33,3 +34,4 @@ class NotificationSerializerForUpdate(serializers.ModelSerializer):
         instance.unread = validated_data['unread']
         instance.save()
         return instance
+"""
