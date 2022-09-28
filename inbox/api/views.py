@@ -1,13 +1,8 @@
-"""
-from inbox.api.serializers import (
-    NotificationSerializer,
-    NotificationSerializerForUpdate,
-)
+from inbox.api.serializers import NotificationSerializer
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from utils.decorators import required_params
 
 
 class NotificationViewSet(
@@ -23,6 +18,7 @@ class NotificationViewSet(
 
     @action(methods=['GET'], detail=False, url_path='unread-count')
     def unread_count(self, request, *args, **kwargs):
+        # GET /api/notifications/unread-count/
         count = self.get_queryset().filter(unread=True).count()
         return Response({'unread_count': count}, status=status.HTTP_200_OK)
 
@@ -30,22 +26,3 @@ class NotificationViewSet(
     def mark_all_as_read(self, request, *args, **kwargs):
         updated_count = self.get_queryset().update(unread=False)
         return Response({'marked_count': updated_count}, status=status.HTTP_200_OK)
-
-    @required_params(methods='POST', params=['unread'])
-    def update(self, request, *args, **kwargs):
-
-        serializer = NotificationSerializerForUpdate(
-            instance=self.get_object(),
-            data=request.data,
-        )
-        if not serializer.is_valid():
-            return Response({
-                'message': "Please check input",
-                'errors': serializer.errors,
-            }, status=status.HTTP_400_BAD_REQUEST)
-        notification = serializer.save()
-        return Response(
-            NotificationSerializer(notification).data,
-            status=status.HTTP_200_OK,
-        )
-"""
