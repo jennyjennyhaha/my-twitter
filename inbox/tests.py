@@ -1,4 +1,3 @@
-"""
 from testing.testcases import TestCase
 from inbox.services import NotificationService
 from notifications.models import Notification
@@ -7,8 +6,8 @@ from notifications.models import Notification
 class NotificationServiceTests(TestCase):
 
     def setUp(self):
-        self.qwerty = self.create_user('qwerty')
-        self.asdfgh = self.create_user('asdfgh')
+        self.qwerty = self.create_user('qwerty', 'qwerty@twitter.com')
+        self.asdfgh = self.create_user('asdfgh', 'asdfgh@twitter.com')
         self.qwerty_tweet = self.create_tweet(self.qwerty)
 
     def test_send_comment_notification(self):
@@ -32,4 +31,3 @@ class NotificationServiceTests(TestCase):
         like = self.create_like(self.asdfgh, self.qwerty_tweet)
         NotificationService.send_like_notification(like)
         self.assertEqual(Notification.objects.count(), 1)
-"""

@@ -1,7 +1,6 @@
-"""
 from comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
-from notifications.signals import notify
+from notifications.signals import notify  # better not use it in practice
 from tweets.models import Tweet
 
 
@@ -10,7 +9,6 @@ class NotificationService(object):
     @classmethod
     def send_like_notification(cls, like):
         target = like.content_object
-        # I like my own post
         if like.user == target.user:
             return
         if like.content_type == ContentType.objects.get_for_model(Tweet):
@@ -35,7 +33,6 @@ class NotificationService(object):
         notify.send(
             comment.user,
             recipient=comment.tweet.user,
-            verb='liked your comment',
+            verb='commented on your tweet',
             target=comment.tweet,
         )
-"""
