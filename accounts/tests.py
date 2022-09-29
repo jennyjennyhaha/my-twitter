@@ -1,4 +1,3 @@
-"""
 from accounts.models import UserProfile
 from testing.testcases import TestCase
 
@@ -6,9 +5,8 @@ from testing.testcases import TestCase
 class UserProfileTests(TestCase):
 
     def test_profile_property(self):
-        jenny = self.create_user('jenny')
+        qwerty = self.create_user('qwerty', 'qwerty@twitter.com')
         self.assertEqual(UserProfile.objects.count(), 0)
-        p = jenny.profile
+        p = qwerty.profile
         self.assertEqual(isinstance(p, UserProfile), True)
         self.assertEqual(UserProfile.objects.count(), 1)
-"""
