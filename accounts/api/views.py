@@ -1,7 +1,13 @@
+from accounts.api.serializers import (
+    LoginSerializer,
+    SignupSerializer,
+    UserProfileSerializerForUpdate,
+    UserSerializer,
+)
+from accounts.models import UserProfile
 from django.contrib.auth.models import User
-from rest_framework import viewsets
 from rest_framework import permissions
-from accounts.api.serializers import UserSerializer
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -10,7 +16,7 @@ from django.contrib.auth import (
     login as django_login,
     logout as django_logout,
 )
-from accounts.api.serializers import SignupSerializer, LoginSerializer
+from utils.permissions import IsObjectOwner
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -91,3 +97,16 @@ class AccountViewSet(viewsets.ViewSet):
         """
         django_logout(request)
         return Response({"success": True})
+
+
+class UserProfileViewSet(
+    viewsets.GenericViewSet,
+    viewsets.mixins.UpdateModelMixin,
+):
+    queryset = UserProfile
+    permission_classes = (permissions.IsAuthenticated, IsObjectOwner)
+    serializer_class = UserProfileSerializerForUpdate
+
+
+
+
