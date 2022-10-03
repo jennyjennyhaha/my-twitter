@@ -3,6 +3,7 @@ from accounts.api.serializers import (
     SignupSerializer,
     UserProfileSerializerForUpdate,
     UserSerializer,
+    UserSerializerWithProfile,
 )
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
@@ -24,8 +25,8 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed and edited
     """
     queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializerWithProfile
+    permission_classes = (permissions.IsAdminUser,)
 
 
 class AccountViewSet(viewsets.ViewSet):
