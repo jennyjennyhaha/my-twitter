@@ -46,9 +46,9 @@ class TweetSerializer(serializers.ModelSerializer):
         return photo_urls
 
 
-
 class TweetSerializerForCreate(serializers.ModelSerializer):
     content = serializers.CharField(min_length=6, max_length=140)
+    # files  is list type
     files = serializers.ListField(
         child=serializers.FileField(),
         allow_empty=True,  # check value

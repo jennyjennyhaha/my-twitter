@@ -6,23 +6,25 @@ from rest_framework import serializers, exceptions
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ('id', 'username')
 
 
 class UserSerializerWithProfile(UserSerializer):
+    # serializer: get data from database and transform to characters
     # user.profile.nickname
     nickname = serializers.CharField(source='profile.nickname')
     # url address
     avatar_url = serializers.SerializerMethodField()
 
-    def get_avatar_url(self, obj):
-        if obj.profile.avatar:
-            return obj.profile.avatar.url
-        return None
-
     class Meta:
         model = User
         fields = ('id', 'username', 'nickname', 'avatar_url')
+
+    def get_avatar_url(self, obj):
+        if obj.profile.avatar:
+            return obj.profile.avatar.url
+        # return url to the frontend
+        return None
 
 
 class UserSerializerForTweet(UserSerializerWithProfile):

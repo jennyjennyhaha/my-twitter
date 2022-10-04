@@ -100,14 +100,12 @@ class AccountViewSet(viewsets.ViewSet):
         return Response({"success": True})
 
 
+# put or patch
 class UserProfileViewSet(
     viewsets.GenericViewSet,
     viewsets.mixins.UpdateModelMixin,
 ):
     queryset = UserProfile
+                                    # login             objectowner
     permission_classes = (permissions.IsAuthenticated, IsObjectOwner)
     serializer_class = UserProfileSerializerForUpdate
-
-
-
-

@@ -1,10 +1,7 @@
-# from django.test import TestCase
-from rest_framework.test import APIClient
-from django.core.files.uploadedfile import SimpleUploadedFile
-# from django.contrib.auth.models import User
 from accounts.models import UserProfile
+from django.core.files.uploadedfile import SimpleUploadedFile
+from rest_framework.test import APIClient
 from testing.testcases import TestCase
-
 
 
 LOGIN_URL = '/api/accounts/login/'
@@ -69,7 +66,7 @@ class AccountApiTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.data['user'], None)
-        self.assertEqual(response.data['user']['email'], 'admin@twitter.com')
+        self.assertEqual(response.data['user']['id'], self.user.id)
 
         # auth already login
         response = self.client.get(LOGIN_STATUS_URL)
@@ -187,7 +184,7 @@ class UserProfileAPITests(TestCase):
         response = qwerty_client.put(url, {
             'avatar': SimpleUploadedFile(
                 name='my-avatar.jpg',
-                content=str.encode('a fake image'),
+                content=str.encode('a fake image'), # encode to a byte type
                 content_type='image/jpeg',
             ),
         })
