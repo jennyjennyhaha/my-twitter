@@ -32,7 +32,7 @@ import debug_toolbar
 
 
 router = routers.DefaultRouter()
-# router.register(r'api/accounts', views.AccountViewSet, basename='accounts')
+
 # router.register(r'api/users', views.UserViewSet)
 router.register(r'api/tweets', TweetViewSet, basename='tweets')
 router.register(r'api/users', UserViewSet)
