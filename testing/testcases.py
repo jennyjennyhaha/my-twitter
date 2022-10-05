@@ -3,12 +3,17 @@ from django.contrib.auth.models import User
 from tweets.models import Tweet
 from comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import caches
 from likes.models import Like
 from rest_framework.test import APIClient
 from newsfeeds.models import NewsFeed
 
 
 class TestCase(DjangoTestCase):
+
+    def clear_cache(self):
+        caches['testing'].clear()
+
     def create_user(self, username, email, password=None):
         if password is None:
             password = 'generic password'
@@ -42,5 +47,6 @@ class TestCase(DjangoTestCase):
 
     def create_newsfeed(self, user, tweet):
         return NewsFeed.objects.create(user=user, tweet=tweet)
+
 
 
