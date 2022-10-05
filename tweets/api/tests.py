@@ -103,7 +103,7 @@ class TweetApiTests(TestCase):
             content=str.encode('selfie 2'),
             content_type='image/jpeg',
         )
-        print(file2)
+
         response = self.user1_client.post(TWEET_CREATE_API, {
             'content': 'two selfies',
             'files': [file1, file2],
