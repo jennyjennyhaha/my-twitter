@@ -11,6 +11,7 @@ NOTIFICATION_URL = '/api/notifications/'
 class NotificationTests(TestCase):
 
     def setUp(self):
+        self.clear_cache()
         self.qwerty, self.qwerty_client = self.create_user_and_client('qwerty', 'qwerty@twitter.com')
         self.asdfgh, self.asdfgh_client = self.create_user_and_client('asdfgh', 'asdfgh@twitter.com')
         self.asdfgh_tweet = self.create_tweet(self.asdfgh)

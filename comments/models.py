@@ -3,6 +3,7 @@ from django.db import models
 from tweets.models import Tweet
 from django.contrib.contenttypes.models import ContentType
 from likes.models import Like
+from utils.memcached_helper import MemcachedHelper
 # Create your models here.
 
 
@@ -31,3 +32,6 @@ class Comment(models.Model):
             object_id=self.id,
         ).order_by('-created_at')
 
+    @property
+    def cached_user(self):
+        return MemcachedHelper.get_object_through_cache(User, self.user_id)

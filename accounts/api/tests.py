@@ -24,6 +24,7 @@ if __name__ == '__main__':
 class AccountApiTests(TestCase):
 
     def setUp(self):
+        self.clear_cache()
         # run when every test function is executed
         self.client = APIClient()
         # self.user = self.createUser(

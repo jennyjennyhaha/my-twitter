@@ -13,7 +13,7 @@ FOLLOW_URL = '/api/friendships/{}/follow/'
 class NewsFeedApiTests(TestCase):
 
     def setUp(self):
-
+        self.clear_cache()
         self.anonymous_client = APIClient()
 
         self.qwerty = self.create_user('qwerty', 'qwerty@twitter.com')
@@ -112,3 +112,52 @@ class NewsFeedApiTests(TestCase):
         self.assertEqual(response.data['has_next_page'], False)
         self.assertEqual(len(response.data['results']), 1)
         self.assertEqual(response.data['results'][0]['id'], new_newsfeed.id)
+
+    def test_user_cache(self):
+        profile = self.asdfgh.profile
+        profile.nickname = 'asdfgh_nick'
+        profile.save()
+
+        self.assertEqual(self.qwerty.username, 'qwerty')
+        self.create_newsfeed(self.asdfgh, self.create_tweet(self.qwerty))
+        self.create_newsfeed(self.asdfgh, self.create_tweet(self.asdfgh))
+
+        response = self.asdfgh_client.get(NEWSFEEDS_URL)
+        results = response.data['results']
+        self.assertEqual(results[0]['tweet']['user']['username'], 'asdfgh')
+        self.assertEqual(results[0]['tweet']['user']['nickname'], 'asdfgh_nick')
+        self.assertEqual(results[1]['tweet']['user']['username'], 'qwerty')
+
+        self.qwerty.username = 'qwerty_username'
+        self.qwerty.save()
+        profile.nickname = 'asdfgh_nick2'
+        profile.save()
+
+        response = self.asdfgh_client.get(NEWSFEEDS_URL)
+        results = response.data['results']
+        self.assertEqual(results[0]['tweet']['user']['username'], 'asdfgh')
+        self.assertEqual(results[0]['tweet']['user']['nickname'], 'asdfgh_nick2')
+        self.assertEqual(results[1]['tweet']['user']['username'], 'qwerty_username')
+
+    def test_tweet_cache(self):
+        tweet = self.create_tweet(self.qwerty, 'content1')
+        self.create_newsfeed(self.asdfgh, tweet)
+        response = self.asdfgh_client.get(NEWSFEEDS_URL)
+        results = response.data['results']
+        self.assertEqual(results[0]['tweet']['user']['username'], 'qwerty')
+        self.assertEqual(results[0]['tweet']['content'], 'content1')
+
+        # update username
+        self.qwerty.username = 'qwerty_username'
+        self.qwerty.save()
+        response = self.asdfgh_client.get(NEWSFEEDS_URL)
+        results = response.data['results']
+        self.assertEqual(results[0]['tweet']['user']['username'], 'qwerty_username')
+
+        # update content
+        tweet.content = 'content2'
+        tweet.save()
+        response = self.asdfgh_client.get(NEWSFEEDS_URL)
+        results = response.data['results']
+        self.assertEqual(results[0]['tweet']['content'], 'content2')
+

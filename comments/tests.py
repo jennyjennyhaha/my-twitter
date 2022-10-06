@@ -6,6 +6,7 @@ from testing.testcases import TestCase
 class CommentModelTests(TestCase):
 
     def setUp(self):
+        self.clear_cache()
         self.jenny = self.create_user('jenny', 'jenny@twitter.com')
         self.tweet = self.create_tweet(self.jenny)
         self.comment = self.create_comment(self.jenny, self.tweet)

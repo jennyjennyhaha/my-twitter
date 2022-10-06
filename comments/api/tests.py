@@ -13,6 +13,7 @@ NEWSFEED_LIST_API = '/api/newsfeeds/'
 class CommentApiTests(TestCase):
 
     def setUp(self):
+        self.clear_cache()
         self.anonymous_client = APIClient()
         self.qwerty = self.create_user('qwerty', 'qwerty@twitter.com')
         self.qwerty_client = APIClient()
