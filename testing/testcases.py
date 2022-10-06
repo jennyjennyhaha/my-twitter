@@ -7,12 +7,14 @@ from django.core.cache import caches
 from likes.models import Like
 from rest_framework.test import APIClient
 from newsfeeds.models import NewsFeed
+from utils.redis_client import RedisClient
 
 
 class TestCase(DjangoTestCase):
 
     def clear_cache(self):
         caches['testing'].clear()
+        RedisClient.clear()
 
     def create_user(self, username, email, password=None):
         if password is None:

@@ -2,6 +2,8 @@ from datetime import timedelta
 from testing.testcases import TestCase
 from tweets.constants import TweetPhotoStatus
 from tweets.models import TweetPhoto
+from utils.redis_client import RedisClient
+from utils.redis_serializers import DjangoModelSerializer
 from utils.time_helpers import utc_now
 
 
@@ -45,3 +47,14 @@ class TweetTests(TestCase):
         self.assertEqual(photo.status, TweetPhotoStatus.PENDING)
         self.assertEqual(self.tweet.tweetphoto_set.count(), 1)
 
+    def test_cache_tweet_in_redis(self):
+        tweet = self.create_tweet(self.jenny)
+        conn = RedisClient.get_connection()
+        serialized_data = DjangoModelSerializer.serialize(tweet)
+        conn.set(f'tweet:{tweet.id}', serialized_data)
+        data = conn.get(f'tweet:not_exists')
+        self.assertEqual(data, None)
+
+        data = conn.get(f'tweet:{tweet.id}')
+        cached_tweet = DjangoModelSerializer.deserialize(data)
+        self.assertEqual(tweet, cached_tweet)  # compare content, not address
