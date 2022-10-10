@@ -26,6 +26,11 @@ class Tweet(models.Model):
     # save the posting time of the tweet
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # newly added field has to be null=True, or default = 0 will traverse every old table to set the value
+    # and slow down the migration and lock the table. The user might not be able to create new tweets.
+    likes_count = models.IntegerField(default=0, null=True)
+    comments_count = models.IntegerField(default=0, null=True)
+
     # at first at the time of model creation, there is no such class
     class Meta:
         index_together = (('user', 'created_at'),)
