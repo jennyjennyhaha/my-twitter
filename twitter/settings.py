@@ -205,6 +205,12 @@ REDIS_DB = 0 if TESTING else 1
 REDIS_KEY_EXPIRE_TIME = 7 * 86400  # in seconds
 REDIS_LIST_LENGTH_LIMIT = 1000 if not TESTING else 20
 
+# CELERY CONFIGURATION OPTIONS
+# CELERY -A twitter worker -1 INFO      use this command to seperately run worker
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/2' if not TESTING else 'redis://127.0.0.1:6379/0'
+CELERY_TIMEZONE = "UTC"
+# THIS one is important!!!
+CELERY_TASK_ALWAYS_EAGER = TESTING
 
 try:
     from .local_settings import *
