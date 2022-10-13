@@ -25,23 +25,23 @@ class CommentApiTests(TestCase):
         self.tweet = self.create_tweet(self.qwerty)
 
     def test_create(self):
-        # 匿名不可以创建
+        # anonymous user cannot create
         response = self.anonymous_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 403)
 
-        # 啥参数都没带不行
+        # no parameters
         response = self.qwerty_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 400)
 
-        # 只带 tweet_id 不行
+        # only tweet_id
         response = self.qwerty_client.post(COMMENT_URL, {'tweet_id': self.tweet.id})
         self.assertEqual(response.status_code, 400)
 
-        # 只带 content 不行
+        # only content
         response = self.qwerty_client.post(COMMENT_URL, {'content': '1'})
         self.assertEqual(response.status_code, 400)
 
-        # content 太长不行
+        # content too long
         response = self.qwerty_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1' * 141,
@@ -49,7 +49,7 @@ class CommentApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual('content' in response.data['errors'], True)
 
-        # tweet_id 和 content 都带才行
+        # tweet_id and content
         response = self.qwerty_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1',
@@ -63,15 +63,15 @@ class CommentApiTests(TestCase):
         comment = self.create_comment(self.qwerty, self.tweet)
         url = '{}{}/'.format(COMMENT_URL, comment.id)
 
-        # 匿名不可以删除
+        # anonymous user cannot delete
         response = self.anonymous_client.delete(url)
         self.assertEqual(response.status_code, 403)
 
-        # 非本人不能删除
+        # not the user himself
         response = self.asdfgh_client.delete(url)
         self.assertEqual(response.status_code, 403)
 
-        # 本人可以删除
+        # the user himself
         count = Comment.objects.count()
         response = self.qwerty_client.delete(url)
         self.assertEqual(response.status_code, 200)
@@ -82,16 +82,16 @@ class CommentApiTests(TestCase):
         another_tweet = self.create_tweet(self.asdfgh)
         url = '{}{}/'.format(COMMENT_URL, comment.id)
 
-        # 使用 put 的情况下
-        # 匿名不可以更新
+        # use put
+        # anonymous user cannot update
         response = self.anonymous_client.put(url, {'content': 'new'})
         self.assertEqual(response.status_code, 403)
-        # 非本人不能更新
+        # not himself
         response = self.asdfgh_client.put(url, {'content': 'new'})
         self.assertEqual(response.status_code, 403)
         comment.refresh_from_db()
         self.assertNotEqual(comment.content, 'new')
-        # 不能更新除 content 外的内容，静默处理，只更新内容
+        # cannot update things other than content
         before_updated_at = comment.updated_at
         before_created_at = comment.created_at
         now = timezone.now()
@@ -111,19 +111,19 @@ class CommentApiTests(TestCase):
         self.assertNotEqual(comment.updated_at, before_updated_at)
 
     def test_list(self):
-        # 必须带 tweet_id
+        # must have tweet_id
         response = self.anonymous_client.get(COMMENT_URL)
         self.assertEqual(response.status_code, 400)
 
-        # 带了 tweet_id 可以访问
-        # 一开始没有评论
+        # with tweet_id, succeed
+        # no comments
         response = self.anonymous_client.get(COMMENT_URL, {
             'tweet_id': self.tweet.id,
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['comments']), 0)
 
-        # 评论按照时间顺序排序
+        # comments ordered in time
         self.create_comment(self.qwerty, self.tweet, '1')
         self.create_comment(self.asdfgh, self.tweet, '2')
         self.create_comment(self.asdfgh, self.create_tweet(self.asdfgh), '3')
@@ -134,7 +134,7 @@ class CommentApiTests(TestCase):
         self.assertEqual(response.data['comments'][0]['content'], '1')
         self.assertEqual(response.data['comments'][1]['content'], '2')
 
-        # 同时提供 user_id 和 tweet_id 只有 tweet_id 会在 filter 中生效
+        #  user_id and tweet_id provided, only tweet_id will be effective in filter
         response = self.anonymous_client.get(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'user_id': self.qwerty.id,

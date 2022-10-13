@@ -31,10 +31,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializerForCreate(serializers.ModelSerializer):
-    # 这两项必须手动添加
-    # 因为默认 ModelSerializer 里只会自动包含 user 和 tweet 而不是 user_id 和 tweet_id
+    # must add manually
+    # default ModelSerializer will only contain user and tweet, but not user_id and tweet_id
     tweet_id = serializers.IntegerField()
-    user_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()  # this is very useful
 
     class Meta:
         model = Comment
@@ -44,8 +44,8 @@ class CommentSerializerForCreate(serializers.ModelSerializer):
         tweet_id = data['tweet_id']
         if not Tweet.objects.filter(id=tweet_id).exists():
             raise ValidationError({'message': 'tweet does not exist'})
-        # 必须 return validated data
-        # 也就是验证过之后，进行过处理的（当然也可以不做处理）输入数据
+        # must return validated data
+        # input data after validation
         return data
 
     def create(self, validated_data):
@@ -64,5 +64,5 @@ class CommentSerializerForUpdate(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.content = validated_data['content']
         instance.save()
-        # update 方法要求 return 修改后的 instance 作为返回值
+        # update method will return modified instance
         return instance

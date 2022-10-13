@@ -101,11 +101,11 @@ class AccountApiTests(TestCase):
             'email': 'someone@twitter.com',
             'password': 'any password',
         }
-        # 测试 get 请求失败
+        #  get request fails
         response = self.client.get(SIGNUP_URL, data)
         self.assertEqual(response.status_code, 405)
 
-        # 测试错误的邮箱
+        # wrong email
         response = self.client.post(SIGNUP_URL, {
             'username': 'someone',
             'email': 'not a correct email',
@@ -114,7 +114,7 @@ class AccountApiTests(TestCase):
         # print(response.data)
         self.assertEqual(response.status_code, 400)
 
-        # 测试密码太短
+        # password too short
         response = self.client.post(SIGNUP_URL, {
             'username': 'someone',
             'email': 'someone@twitter.com',
@@ -123,7 +123,7 @@ class AccountApiTests(TestCase):
         # print(response.data)
         self.assertEqual(response.status_code, 400)
 
-        # 测试用户名太长
+        # username too long
         response = self.client.post(SIGNUP_URL, {
             'username': 'username is tooooooooooooooooo loooooooong',
             'email': 'someone@twitter.com',
@@ -132,16 +132,16 @@ class AccountApiTests(TestCase):
         # print(response.data)
         self.assertEqual(response.status_code, 400)
 
-        # 成功注册
+        # signup done!
         response = self.client.post(SIGNUP_URL, data)
         self.assertEqual(response.status_code, 201)
         print(response.status_code)
         self.assertEqual(response.data['user']['username'], 'someone')
-        # 验证 user profile 已经被创建
+        # user profile has been created
         created_user_id = response.data['user']['id']
         profile = UserProfile.objects.filter(user_id=created_user_id).first()
         self.assertNotEqual(profile, None)
-        # 验证用户已经登入
+        # log in done!
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
 
