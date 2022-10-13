@@ -38,8 +38,8 @@ pip install -r requirements.txt # -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 service mysql start
 
-# 设置mysql的root账户的密码为yourpassword
-# 创建名为twitter的数据库
+# mysql root's password is yourpassword
+# 为twitter database
 mysql -u root << EOF
 	ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'yourpassword';
 	flush privileges;
@@ -50,11 +50,11 @@ EOF
 python manage.py migrate
 
 # fi
-# superuser名字
+# superuser name
 USER="admin"
-# superuser密码
+# superuser password
 PASS="admin"
-# superuser邮箱
+# superuser email
 MAIL="admin@twitter.com"
 script="
 from django.contrib.auth.models import User;
@@ -72,11 +72,5 @@ else:
 printf "$script" | python manage.py shell
 
 
-# 如果想直接进入/vagrant路径下
-# 请输入vagrant ssh命令进入
-# 手动输入
-# 输入ls -a
-# 输入 vi .bashrc
-# 在最下面，添加cd /vagrant
 
 echo 'All Done!'
