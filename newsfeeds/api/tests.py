@@ -35,21 +35,21 @@ class NewsFeedApiTests(TestCase):
             Friendship.objects.create(from_user=self.asdfgh, to_user=following)
 
     def test_list(self):
-        # 需要登录
+        # need log in
         response = self.anonymous_client.get(NEWSFEEDS_URL)
         self.assertEqual(response.status_code, 403)
-        # 不能用 post
+        # cannot use post
         response = self.qwerty_client.post(NEWSFEEDS_URL)
         self.assertEqual(response.status_code, 405)
-        # 一开始啥都没有
+        # there is nothing
         response = self.qwerty_client.get(NEWSFEEDS_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['results']), 0)
-        # 自己发的信息是可以看到的
+        # can see own tweet
         self.qwerty_client.post(POST_TWEETS_URL, {'content': 'Hello World'})
         response = self.qwerty_client.get(NEWSFEEDS_URL)
         self.assertEqual(len(response.data['results']), 1)
-        # 关注之后可以看到别人发的
+        # can see other's after following
         self.qwerty_client.post(FOLLOW_URL.format(self.asdfgh.id))
         response = self.asdfgh_client.post(POST_TWEETS_URL, {
             'content': 'Hello Twitter',

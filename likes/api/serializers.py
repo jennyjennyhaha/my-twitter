@@ -57,10 +57,7 @@ class LikeSerializerForCreate(BaseLikeSerializerForCreateAndCancel):
 class LikeSerializerForCancel(BaseLikeSerializerForCreateAndCancel):
 
     def cancel(self):
-        """
-        cancel 方法是一个自定义的方法，cancel 不会被 serializer.save 调用
-        所以需要直接调用 serializer.cancel()
-        """
+
         model_class = self._get_model_class(self.validated_data)
         Like.objects.filter(
             content_type=ContentType.objects.get_for_model(model_class),

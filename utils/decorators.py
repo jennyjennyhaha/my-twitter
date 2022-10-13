@@ -10,16 +10,13 @@ def required_params(request_attr='query_params', params=None):
     就是被 @required_params 包裹起来的函数 view_func
     """
 
-    # 从效果上来说，参数中写 params=[] 很多时候也没有太大问题
-    # 但是从好的编程习惯上来说，函数的参数列表中的值不能是一个 mutable 的参数
+    #
+    # params cannot be mutable
     if params is None:
         params = []
 
     def decorator(view_func):
-        """
-        decorator 函数通过 wraps 来将 view_func 里的参数解析出来传递给 _wrapped_view
-        这里的 instance 参数其实就是在 view_func 里的 self
-        """
+
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             data = getattr(request, request_attr)
@@ -34,7 +31,7 @@ def required_params(request_attr='query_params', params=None):
                     'message': u'missing {} in request'.format(params_str),
                     'success': False,
                 }, status=status.HTTP_400_BAD_REQUEST)
-            # 做完检测之后，再去调用被 @required_params 包裹起来的 view_func
+
             return view_func(instance, request, *args, **kwargs)
         return _wrapped_view
     return decorator

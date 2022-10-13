@@ -97,18 +97,18 @@ class NotificationApiTests(TestCase):
             'object_id': comment.id,
         })
 
-        # 匿名用户无法访问 api
+        # anonymous user cannot access api
         response = self.anonymous_client.get(NOTIFICATION_URL)
         self.assertEqual(response.status_code, 403)
-        # asdfgh 看不到任何 notifications
+        # asdfgh cannot see any notifications
         response = self.asdfgh_client.get(NOTIFICATION_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 0)
-        # qwerty 看到两个 notifications
+        # qwerty see two notifications
         response = self.qwerty_client.get(NOTIFICATION_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 2)
-        # 标记之后看到一个未读
+        # after mark, see one unread
         notification = self.qwerty.notifications.first()
         notification.unread = False
         notification.save()
@@ -132,30 +132,30 @@ class NotificationApiTests(TestCase):
         notification = self.qwerty.notifications.first()
 
         url = '/api/notifications/{}/'.format(notification.id)
-        # post 不行，需要用 put
+        # cannot use post，need put
         response = self.asdfgh_client.post(url, {'unread': False})
         self.assertEqual(response.status_code, 405)
-        # 不可以被其他人改变 notification 状态
+        # notification status cannot be changed by others
         response = self.anonymous_client.put(url, {'unread': False})
         self.assertEqual(response.status_code, 403)
-        # 因为 queryset 是按照当前登陆用户来，所以会返回 404 而不是 403
+        #  queryset is done in accordance with current user，so return 404 not 403
         response = self.asdfgh_client.put(url, {'unread': False})
         self.assertEqual(response.status_code, 404)
-        # 成功标记为已读
+        # done marked as read!
         response = self.qwerty_client.put(url, {'unread': False})
         self.assertEqual(response.status_code, 200)
         unread_url = '/api/notifications/unread-count/'
         response = self.qwerty_client.get(unread_url)
         self.assertEqual(response.data['unread_count'], 1)
 
-        # 再标记为未读
+        # marked as unread
         response = self.qwerty_client.put(url, {'unread': True})
         response = self.qwerty_client.get(unread_url)
         self.assertEqual(response.data['unread_count'], 2)
-        # 必须带 unread
+        # must have unread
         response = self.qwerty_client.put(url, {'verb': 'newverb'})
         self.assertEqual(response.status_code, 400)
-        # 不可修改其他的信息
+        # cannot change other information
         response = self.qwerty_client.put(url, {'verb': 'newverb', 'unread': False})
         self.assertEqual(response.status_code, 200)
         notification.refresh_from_db()

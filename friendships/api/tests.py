@@ -35,23 +35,23 @@ class FriendshipApiTests(TestCase):
     def test_follow(self):
         url = FOLLOW_URL.format(self.qwerty.id,)
 
-        # 需要登录才能 follow 别人
+        # no log in, no follow
         response = self.anonymous_client.post(url)
         self.assertEqual(response.status_code, 403)
-        # 要用 get 来 follow
+        # need get to follow
         response = self.asdfgh_client.get(url)
         self.assertEqual(response.status_code, 405)
-        # 不可以 follow 自己
+        # cannot follow himself
         response = self.qwerty_client.post(url)
         self.assertEqual(response.status_code, 400)
-        # follow 成功
+        # follow done!
         response = self.asdfgh_client.post(url)
         self.assertEqual(response.status_code, 201)
-        # 重复 follow 静默成功
+        # repeat follow success
         response = self.asdfgh_client.post(url)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['duplicate'], True)
-        # 反向关注会创建新的数据
+        # reverse follow, create new data
         count = Friendship.objects.count()
         response = self.qwerty_client.post(FOLLOW_URL.format(self.asdfgh.id))
         self.assertEqual(response.status_code, 201)
@@ -60,23 +60,23 @@ class FriendshipApiTests(TestCase):
     def test_unfollow(self):
         url = UNFOLLOW_URL.format(self.qwerty.id)
 
-        # 需要登录才能 unfollow 别人
+        # no log in, no unfollow
         response = self.anonymous_client.post(url)
         self.assertEqual(response.status_code, 403)
-        # 不能用 get 来 unfollow 别人
+        # cannot use get to unfollow
         response = self.asdfgh_client.get(url)
         self.assertEqual(response.status_code, 405)
-        # 不能用 unfollow 自己
+        # cannot unfollow himself
         response = self.qwerty_client.post(url)
         self.assertEqual(response.status_code, 400)
-        # unfollow 成功
+        # unfollow done!
         Friendship.objects.create(from_user=self.asdfgh, to_user=self.qwerty)
         count = Friendship.objects.count()
         response = self.asdfgh_client.post(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['deleted'], 1)
         self.assertEqual(Friendship.objects.count(), count - 1)
-        # 未 follow 的情况下 unfollow 静默处理
+        # not follow now. unfollow do nothing
         count = Friendship.objects.count()
         response = self.asdfgh_client.post(url)
         self.assertEqual(response.status_code, 200)
@@ -92,7 +92,7 @@ class FriendshipApiTests(TestCase):
         response = self.anonymous_client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['results']), 3)
-        # 确保按照时间倒序
+        # in time order
         ts0 = response.data['results'][0]['created_at']
         ts1 = response.data['results'][1]['created_at']
         ts2 = response.data['results'][2]['created_at']
@@ -120,7 +120,7 @@ class FriendshipApiTests(TestCase):
         response = self.anonymous_client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['results']), 2)
-        # 确保按照时间倒序
+        # reverse order of time
         ts0 = response.data['results'][0]['created_at']
         ts1 = response.data['results'][1]['created_at']
         self.assertEqual(ts0 > ts1, True)

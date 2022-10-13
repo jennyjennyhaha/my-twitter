@@ -9,7 +9,7 @@ update-alternatives --install /usr/bin/python python /usr/bin/python3.6 2
 apt-get update
 apt-get install tree
 
-# 安装配置mysql8
+# mysql8
 if ! [ -e /vagrant/mysql-apt-config_0.8.15-1_all.deb ]; then
 	wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb
 fi
@@ -26,15 +26,14 @@ else
   echo "pip3 已安装"
 fi
 
-# 升级pip，目前存在问题，read timed out，看脸，有时候可以，但大多时候不行
+# update pip，
 python -m pip install --upgrade pip
-# 换源完美解决
-# 安装pip所需依赖
+
 pip install --upgrade setuptools # -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install --ignore-installed wrapt # -i https://pypi.tuna.tsinghua.edu.cn/simple
-# 安装pip最新版
+# pip newest
 pip install -U pip # -i https://pypi.tuna.tsinghua.edu.cn/simple
-# 根据 requirements.txt 里的记录安装 pip package，确保所有版本之间的兼容性
+# install pip package
 pip install -r requirements.txt # -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 service mysql start

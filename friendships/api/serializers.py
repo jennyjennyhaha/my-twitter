@@ -44,9 +44,7 @@ class FriendshipSerializerForCreate(serializers.ModelSerializer):
         )
 
 
-# 可以通过 source=xxx 指定去访问每个 model instance 的 xxx 方法
-# 即 model_instance.xxx 来获得数据
-# https://www.django-rest-framework.org/api-guide/serializers/#specifying-fields-explicitly
+
 class FollowerSerializer(serializers.ModelSerializer, FollowingUserIdSetMixin):
     user = UserSerializerForFriendship(source='cached_from_user')
     created_at = serializers.DateTimeField()

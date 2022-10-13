@@ -7,7 +7,7 @@ class RedisClient:
 
     @classmethod
     def get_connection(cls):
-        # 使用 singleton 模式，全局只创建一个 connection
+        #  singleton mode，only one connection created
         if cls.conn:
             return cls.conn
         cls.conn = redis.Redis(

@@ -22,8 +22,8 @@ class CommentViewSet(viewsets.GenericViewSet):
     filterset_fields = ('tweet_id',)
 
     def get_permissions(self):
-        # 注意要加用 AllowAny() / IsAuthenticated() 实例化出对象
-        # 而不是 AllowAny / IsAuthenticated 这样只是一个类名
+        # use AllowAny() / IsAuthenticated() they are instances
+        # don't use AllowAny / IsAuthenticated, they are just classes
         if self.action == 'create':
             return [IsAuthenticated()]
         if self.action in ['destroy', 'update']:
@@ -60,8 +60,8 @@ class CommentViewSet(viewsets.GenericViewSet):
             'tweet_id': request.data.get('tweet_id'),
             'content': request.data.get('content'),
         }
-        # 注意这里必须要加 'data=' 来指定参数是传给 data 的
-        # 因为默认的第一个参数是 instance
+        # must use 'data=' to transfer to data
+        # the default first parameter is instance
         serializer = CommentSerializerForCreate(data=data)
         if not serializer.is_valid():
             return Response({
@@ -69,7 +69,7 @@ class CommentViewSet(viewsets.GenericViewSet):
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        # save 方法会触发 serializer 里的 create 方法，点进 save 的具体实现里可以看到
+        # save will trigger serializer's create method
         comment = serializer.save()
         NotificationService.send_comment_notification(comment)
         return Response(
@@ -78,8 +78,8 @@ class CommentViewSet(viewsets.GenericViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        # get_object 是 DRF 包装的一个函数，会在找不到的时候 raise 404 error
-        # 所以这里无需做额外判断
+        # get_object is a func，when cannot find object, raise 404 error
+        # no extra judge
         serializer = CommentSerializerForUpdate(
             instance=self.get_object(),
             data=request.data,
@@ -89,8 +89,8 @@ class CommentViewSet(viewsets.GenericViewSet):
                 'message': 'Please check input',
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
-        # save 方法会触发 serializer 里的 update 方法，点进 save 的具体实现里可以看到
-        # save 是根据 instance 参数有没有传来决定是触发 create 还是 update
+        # save will trigger serializer's update method
+        # save will trigger create or update according to instance parameter's status
         comment = serializer.save()
         return Response(
             CommentSerializer(comment, context={'request': request}).data,
@@ -100,7 +100,7 @@ class CommentViewSet(viewsets.GenericViewSet):
     def destroy(self, request, *args, **kwargs):
         comment = self.get_object()
         comment.delete()
-        # DRF 里默认 destroy 返回的是 status code = 204 no content
-        # 这里 return 了 success=True 更直观的让前端去做判断，所以 return 200 更合适
+        # DRF default setting： destroy returns status code = 204 no content
+        # return 200
         return Response({'success': True}, status=status.HTTP_200_OK)
 

@@ -17,7 +17,7 @@ class JSONEncoder(DjangoJSONEncoder):
         # See "Date Time String Format" in the ECMA-262 specification.
         if isinstance(o, datetime.datetime):
             r = o.isoformat()
-            # 唯一修改的地方，保留 mirco second 增加时间精度
+            # maintain mirco second
             # if o.microsecond:
             #     r = r[:23] + r[26:]
             if r.endswith('+00:00'):
