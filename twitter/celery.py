@@ -10,7 +10,7 @@ app = Celery('twitter')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # load task modules from all registered django app configs
-app.qutodiscover_tasks()
+app.autodiscover_tasks()
 
 
 @app.task(bind=True)
