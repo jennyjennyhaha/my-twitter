@@ -36,6 +36,11 @@ class FriendshipService(object):
     # follower_ids = [friendship.from_user_id for friendship in friendships]
     # followers = User.objects.filter(id__in=follower_ids)
 
+    @classmethod
+    def get_follower_ids(cls, to_user_id):
+        friendships = Friendship.objects.filter(to_user_id=to_user_id)
+        return [friendship.from_user_id for friendship in friendships]
+
     # following uses cache
     @classmethod
     def get_following_user_id_set(cls, from_user_id):
