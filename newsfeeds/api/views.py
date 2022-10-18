@@ -1,5 +1,7 @@
 from newsfeeds.api.serializers import NewsFeedSerializer
 from newsfeeds.models import NewsFeed
+from ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 from newsfeeds.services import NewsFeedService
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +15,7 @@ class NewsFeedViewSet(viewsets.GenericViewSet):
     def get_queryset(self):
         return NewsFeed.objects.filter(user=self.request.user)
 
+    @method_decorator(ratelimit(key='user', rate='5/m', method='GET', block=True))
     def list(self, request):
         cached_newsfeeds = NewsFeedService.get_cached_newsfeeds(request.user.id)
         page = self.paginator.paginate_cached_list(cached_newsfeeds, request)

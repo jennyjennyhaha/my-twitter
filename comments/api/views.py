@@ -1,15 +1,17 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from comments.models import Comment
-from utils.permissions import IsObjectOwner
 from comments.api.serializers import (
     CommentSerializer,
     CommentSerializerForCreate,
     CommentSerializerForUpdate,
 )
-from utils.decorators import required_params
+from django.utils.decorators import method_decorator
 from inbox.services import NotificationService
+from ratelimit.decorators import ratelimit
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from utils.decorators import required_params
+from utils.permissions import IsObjectOwner
 
 
 class CommentViewSet(viewsets.GenericViewSet):
@@ -31,6 +33,7 @@ class CommentViewSet(viewsets.GenericViewSet):
         return [AllowAny()]
 
     @required_params(params=['tweet_id'])
+    @method_decorator(ratelimit(key='user', rate='3/m', method='GET', block=True))
     def list(self, request, *args, **kwargs):
         """
         if 'tweet_id' not in request.query_params:

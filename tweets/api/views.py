@@ -8,6 +8,8 @@ from tweets.api.serializers import (
     TweetSerializerForDetail,
 )
 from tweets.models import Tweet
+from ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 from tweets.services import TweetService
 from utils.decorators import required_params
 from utils.paginations import EndlessPagination
@@ -28,6 +30,7 @@ class TweetViewSet(viewsets.GenericViewSet,
             return [AllowAny()]
         return [IsAuthenticated()]
 
+    @method_decorator(ratelimit(key='user_or_ip', rate='5/s', method='GET', block=True))
     def retrieve(self, request, *args, **kwargs):
 
         serializer = TweetSerializerForDetail(
@@ -37,6 +40,7 @@ class TweetViewSet(viewsets.GenericViewSet,
         return Response(serializer.data)
 
     @required_params(params=['user_id'])
+    @method_decorator(ratelimit(key='user', rate='3/m', method='GET', block=True))
     def list(self, request, *args, **kwargs):
         user_id = request.query_params['user_id']
         cached_tweets = TweetService.get_cached_tweets(user_id)
@@ -56,9 +60,11 @@ class TweetViewSet(viewsets.GenericViewSet,
         )
         return self.get_paginated_response(serializer.data)
 
+    @method_decorator(ratelimit(key='user', rate='1/s', method='POST', block=True))
+    @method_decorator(ratelimit(key='user', rate='5/m', method='POST', block=True))
     def create(self, request, *args, **kwargs):
         """
-        重载 create 方法，因为需要默认用当前登录用户作为 tweet.user
+        default: current login user as tweet.user
         """
         # return Response("123", status=200)
 
